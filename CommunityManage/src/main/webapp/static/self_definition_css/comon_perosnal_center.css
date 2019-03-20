@@ -1,0 +1,4 @@
+/*个人中心的div全部隐藏*/
+.main_data{
+   display: none;
+}

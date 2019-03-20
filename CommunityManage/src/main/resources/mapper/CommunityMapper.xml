@@ -1,0 +1,316 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.suke.communitymanage.dao.CommunityMapper">
+  <resultMap id="BaseResultMap" type="com.suke.communitymanage.bean.Community">
+    <id column="com_id" jdbcType="INTEGER" property="comId" />
+    <result column="com_name" jdbcType="VARCHAR" property="comName" />
+    <result column="com_create_date" jdbcType="VARCHAR" property="comCreateDate" />
+    <result column="com_img" jdbcType="VARCHAR" property="comImg" />
+    <result column="com_member_number" jdbcType="INTEGER" property="comMemberNumber" />
+    <result column="com_introduction" jdbcType="VARCHAR" property="comIntroduction" />
+    <result column="com_admin_id" jdbcType="VARCHAR" property="comAdminId" />
+  </resultMap>
+
+
+
+
+  <!--社团和会长一对一级联查询-->
+  <resultMap id="SelfResultMap" type="com.suke.communitymanage.bean.Community" extends="BaseResultMap">
+    <association property="chairman" javaType="com.suke.communitymanage.bean.Chairman" resultMap="com.suke.communitymanage.dao.ChairmanMapper.BaseResultMap">
+    </association>
+  </resultMap>
+
+  <!--社团和普通成员多对多级联查询-->
+  <resultMap id="SelfResultMap2" type="com.suke.communitymanage.bean.Community" extends="BaseResultMap">
+    <!--多对多级联-->
+    <collection property="members" ofType="com.suke.communitymanage.bean.Member" resultMap="com.suke.communitymanage.dao.MemberMapper.BaseResultMap">
+    </collection>
+  </resultMap>
+
+
+
+  <sql id="Example_Where_Clause">
+    <where>
+      <foreach collection="oredCriteria" item="criteria" separator="or">
+        <if test="criteria.valid">
+          <trim prefix="(" prefixOverrides="and" suffix=")">
+            <foreach collection="criteria.criteria" item="criterion">
+              <choose>
+                <when test="criterion.noValue">
+                  and ${criterion.condition}
+                </when>
+                <when test="criterion.singleValue">
+                  and ${criterion.condition} #{criterion.value}
+                </when>
+                <when test="criterion.betweenValue">
+                  and ${criterion.condition} #{criterion.value} and #{criterion.secondValue}
+                </when>
+                <when test="criterion.listValue">
+                  and ${criterion.condition}
+                  <foreach close=")" collection="criterion.value" item="listItem" open="(" separator=",">
+                    #{listItem}
+                  </foreach>
+                </when>
+              </choose>
+            </foreach>
+          </trim>
+        </if>
+      </foreach>
+    </where>
+  </sql>
+  <sql id="Update_By_Example_Where_Clause">
+    <where>
+      <foreach collection="example.oredCriteria" item="criteria" separator="or">
+        <if test="criteria.valid">
+          <trim prefix="(" prefixOverrides="and" suffix=")">
+            <foreach collection="criteria.criteria" item="criterion">
+              <choose>
+                <when test="criterion.noValue">
+                  and ${criterion.condition}
+                </when>
+                <when test="criterion.singleValue">
+                  and ${criterion.condition} #{criterion.value}
+                </when>
+                <when test="criterion.betweenValue">
+                  and ${criterion.condition} #{criterion.value} and #{criterion.secondValue}
+                </when>
+                <when test="criterion.listValue">
+                  and ${criterion.condition}
+                  <foreach close=")" collection="criterion.value" item="listItem" open="(" separator=",">
+                    #{listItem}
+                  </foreach>
+                </when>
+              </choose>
+            </foreach>
+          </trim>
+        </if>
+      </foreach>
+    </where>
+  </sql>
+  <sql id="Base_Column_List">
+    com_id, com_name, com_create_date, com_img, com_member_number, com_introduction, 
+    com_admin_id
+  </sql>
+  <!--社团和会长-->
+  <sql id="andChairman_Column_List">
+    co.com_id, co.com_name, co.com_create_date, co.com_img, co.com_member_number, co.com_introduction,
+    co.com_admin_id, a.member_id, a.name, a.phone, a.sex, a.birthday, a.duty
+  </sql>
+  <!--社团和普通成员多对多级联查询-->
+  <sql id="andMember_Column_List">
+   co.*,m.*
+
+  </sql>
+  <!--用户id得到的社团-->
+  <sql id="GetJoinedCommunity">
+  co.*
+  </sql>
+  <!--社团和普通成员多对多级联查询（给出用户id和查询条件模糊查询出用户参加的社团）-->
+  <select id="likeSearchJoinedCom" parameterType="java.lang.String" resultMap="BaseResultMap">
+    select
+    <include refid="GetJoinedCommunity" />
+    from (community_info co inner join  dd_com_member cm on co.com_id=cm.com_id)inner join
+    member_info m on cm.member_id=m.member_id AND m.member_id=#{mem_id}
+
+    AND CONCAT(co.com_name, co.com_create_date,co.com_id) LIKE CONCAT('%',#{condition},'%')
+
+  </select>
+  <!--社团和普通成员多对多级联查询（给出用户id查询出用户参加的社团）-->
+  <select id="getkjoinedCommunity" parameterType="java.lang.String" resultMap="BaseResultMap">
+    select
+    <include refid="GetJoinedCommunity" />
+  from (community_info co inner join  dd_com_member cm on co.com_id=cm.com_id)inner join
+    member_info m on cm.member_id=m.member_id AND m.member_id=#{mem_id}
+  </select>
+  <!--社团和普通成员多对多级联查询-->
+  <!--
+INNER JOIN 关联三张数据表的写法：
+SELECT * FROM (表1 INNER JOIN 表2 ON 表1.字段号=表2.字段号) INNER JOIN 表3 ON 表1.字段号=表3.字段号-->
+  <select id="selectCommunityAndMemberById"  resultMap="SelfResultMap2">
+    select
+    <include refid="andMember_Column_List" />
+    from (community_info co inner join dd_com_member cm on co.com_id=cm.com_id)inner join
+    member_info m on cm.member_id=m.member_id  and co.com_id=#{comId} and
+    m.member_id=#{memid}
+
+
+  </select>
+  <!--//社团管理员联合查询-->
+  <select id="selectCommunityAndAdminById" parameterType="java.lang.Integer" resultMap="SelfResultMap">
+
+  select
+    <include refid="andChairman_Column_List" />
+  from community_info co,community_admin a
+  where co.com_admin_id= a.member_id and co.com_id=#{comId,jdbcType=INTEGER}
+</select>
+  <select id="selectByExample" parameterType="com.suke.communitymanage.bean.CommunityExample" resultMap="BaseResultMap">
+    select
+    <if test="distinct">
+      distinct
+    </if>
+    <include refid="Base_Column_List" />
+    from community_info
+    <if test="_parameter != null">
+      <include refid="Example_Where_Clause" />
+    </if>
+    <if test="orderByClause != null">
+      order by ${orderByClause}
+    </if>
+  </select>
+  <select id="selectByPrimaryKey" parameterType="java.lang.Integer" resultMap="BaseResultMap">
+    select 
+    <include refid="Base_Column_List" />
+    from community_info
+    where com_id = #{comId,jdbcType=INTEGER}
+  </select>
+
+  <delete id="deleteByPrimaryKey" parameterType="java.lang.Integer">
+    delete from community_info
+    where com_id = #{comId,jdbcType=INTEGER}
+  </delete>
+  <delete id="deleteByExample" parameterType="com.suke.communitymanage.bean.CommunityExample">
+    delete from community_info
+    <if test="_parameter != null">
+      <include refid="Example_Where_Clause" />
+    </if>
+  </delete>
+  <insert id="insert" parameterType="com.suke.communitymanage.bean.Community">
+    insert into community_info (com_id, com_name, com_create_date, 
+      com_img, com_member_number, com_introduction, 
+      com_admin_id)
+    values (#{comId,jdbcType=INTEGER}, #{comName,jdbcType=VARCHAR}, #{comCreateDate,jdbcType=VARCHAR}, 
+      #{comImg,jdbcType=VARCHAR}, #{comMemberNumber,jdbcType=INTEGER}, #{comIntroduction,jdbcType=VARCHAR}, 
+      #{comAdminId,jdbcType=VARCHAR})
+  </insert>
+  <insert id="insertSelective" parameterType="com.suke.communitymanage.bean.Community">
+    insert into community_info
+    <trim prefix="(" suffix=")" suffixOverrides=",">
+      <if test="comId != null">
+        com_id,
+      </if>
+      <if test="comName != null">
+        com_name,
+      </if>
+      <if test="comCreateDate != null">
+        com_create_date,
+      </if>
+      <if test="comImg != null">
+        com_img,
+      </if>
+      <if test="comMemberNumber != null">
+        com_member_number,
+      </if>
+      <if test="comIntroduction != null">
+        com_introduction,
+      </if>
+      <if test="comAdminId != null">
+        com_admin_id,
+      </if>
+    </trim>
+    <trim prefix="values (" suffix=")" suffixOverrides=",">
+      <if test="comId != null">
+        #{comId,jdbcType=INTEGER},
+      </if>
+      <if test="comName != null">
+        #{comName,jdbcType=VARCHAR},
+      </if>
+      <if test="comCreateDate != null">
+        #{comCreateDate,jdbcType=VARCHAR},
+      </if>
+      <if test="comImg != null">
+        #{comImg,jdbcType=VARCHAR},
+      </if>
+      <if test="comMemberNumber != null">
+        #{comMemberNumber,jdbcType=INTEGER},
+      </if>
+      <if test="comIntroduction != null">
+        #{comIntroduction,jdbcType=VARCHAR},
+      </if>
+      <if test="comAdminId != null">
+        #{comAdminId,jdbcType=VARCHAR},
+      </if>
+    </trim>
+  </insert>
+  <select id="countByExample" parameterType="com.suke.communitymanage.bean.CommunityExample" resultType="java.lang.Long">
+    select count(*) from community_info
+    <if test="_parameter != null">
+      <include refid="Example_Where_Clause" />
+    </if>
+  </select>
+  <update id="updateByExampleSelective" parameterType="map">
+    update community_info
+    <set>
+      <if test="record.comId != null">
+        com_id = #{record.comId,jdbcType=INTEGER},
+      </if>
+      <if test="record.comName != null">
+        com_name = #{record.comName,jdbcType=VARCHAR},
+      </if>
+      <if test="record.comCreateDate != null">
+        com_create_date = #{record.comCreateDate,jdbcType=VARCHAR},
+      </if>
+      <if test="record.comImg != null">
+        com_img = #{record.comImg,jdbcType=VARCHAR},
+      </if>
+      <if test="record.comMemberNumber != null">
+        com_member_number = #{record.comMemberNumber,jdbcType=INTEGER},
+      </if>
+      <if test="record.comIntroduction != null">
+        com_introduction = #{record.comIntroduction,jdbcType=VARCHAR},
+      </if>
+      <if test="record.comAdminId != null">
+        com_admin_id = #{record.comAdminId,jdbcType=VARCHAR},
+      </if>
+    </set>
+    <if test="_parameter != null">
+      <include refid="Update_By_Example_Where_Clause" />
+    </if>
+  </update>
+  <update id="updateByExample" parameterType="map">
+    update community_info
+    set com_id = #{record.comId,jdbcType=INTEGER},
+      com_name = #{record.comName,jdbcType=VARCHAR},
+      com_create_date = #{record.comCreateDate,jdbcType=VARCHAR},
+      com_img = #{record.comImg,jdbcType=VARCHAR},
+      com_member_number = #{record.comMemberNumber,jdbcType=INTEGER},
+      com_introduction = #{record.comIntroduction,jdbcType=VARCHAR},
+      com_admin_id = #{record.comAdminId,jdbcType=VARCHAR}
+    <if test="_parameter != null">
+      <include refid="Update_By_Example_Where_Clause" />
+    </if>
+  </update>
+  <update id="updateByPrimaryKeySelective" parameterType="com.suke.communitymanage.bean.Community">
+    update community_info
+    <set>
+      <if test="comName != null">
+        com_name = #{comName,jdbcType=VARCHAR},
+      </if>
+      <if test="comCreateDate != null">
+        com_create_date = #{comCreateDate,jdbcType=VARCHAR},
+      </if>
+      <if test="comImg != null">
+        com_img = #{comImg,jdbcType=VARCHAR},
+      </if>
+      <if test="comMemberNumber != null">
+        com_member_number = #{comMemberNumber,jdbcType=INTEGER},
+      </if>
+      <if test="comIntroduction != null">
+        com_introduction = #{comIntroduction,jdbcType=VARCHAR},
+      </if>
+      <if test="comAdminId != null">
+        com_admin_id = #{comAdminId,jdbcType=VARCHAR},
+      </if>
+    </set>
+    where com_id = #{comId,jdbcType=INTEGER}
+  </update>
+  <update id="updateByPrimaryKey" parameterType="com.suke.communitymanage.bean.Community">
+    update community_info
+    set com_name = #{comName,jdbcType=VARCHAR},
+      com_create_date = #{comCreateDate,jdbcType=VARCHAR},
+      com_img = #{comImg,jdbcType=VARCHAR},
+      com_member_number = #{comMemberNumber,jdbcType=INTEGER},
+      com_introduction = #{comIntroduction,jdbcType=VARCHAR},
+      com_admin_id = #{comAdminId,jdbcType=VARCHAR}
+    where com_id = #{comId,jdbcType=INTEGER}
+  </update>
+</mapper>

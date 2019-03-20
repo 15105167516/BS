@@ -1,0 +1,60 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE generatorConfiguration
+        PUBLIC "-//mybatis.org//DTD MyBatis Generator Configuration 1.0//EN"
+        "http://mybatis.org/dtd/mybatis-generator-config_1_0.dtd">
+<generatorConfiguration>
+
+    <context id="DB2Tables" targetRuntime="MyBatis3">
+        <commentGenerator>
+            <property name="suppressAllComments" value="true"/>
+        </commentGenerator>
+        <!-- 配置数据库连接 -->
+        <jdbcConnection driverClass="com.mysql.jdbc.Driver"
+                        connectionURL="jdbc:mysql://localhost:3306/community_manage" userId="root"
+                        password="root">
+        </jdbcConnection>
+
+        <javaTypeResolver>
+            <property name="forceBigDecimals" value="false"/>
+        </javaTypeResolver>
+
+        <!-- 指定javaBean生成的位置 -->
+        <javaModelGenerator targetPackage="com.suke.communitymanage.bean"
+                            targetProject=".\src\main\java">
+            <property name="enableSubPackages" value="true"/>
+            <property name="trimStrings" value="true"/>
+        </javaModelGenerator>
+
+        <!--指定sql映射文件生成的位置 -->
+        <sqlMapGenerator targetPackage="mapper" targetProject=".\src\main\resources">
+            <property name="enableSubPackages" value="true"/>
+        </sqlMapGenerator>
+
+        <!-- 指定dao接口生成的位置，mapper接口 -->
+        <javaClientGenerator type="XMLMAPPER"
+                             targetPackage="com.suke.communitymanage.dao" targetProject=".\src\main\java">
+            <property name="enableSubPackages" value="true"/>
+        </javaClientGenerator>
+
+
+        <!-- table指定每个表的生成策略 -->
+        <!--//1.社团信息表-->
+        <!--<table tableName="community_info" domainObjectName="Community"></table>-->
+        <!--//2.社团活动信息表-->
+        <table tableName="com_activity" domainObjectName="Activity"></table>
+        <!--//3.活动评价表-->
+        <!--<table tableName="activity_evaluate" domainObjectName="Evaluate"></table>-->
+        <!--//4.社团成员信息表-->
+        <!--<table tableName="member_info" domainObjectName="Member"></table>-->
+        <!--//5.超级管理员信息表-->
+        <!--<table tableName="su_admin" domainObjectName="SuManage"></table>-->
+        <!--//6.社团负责人信息表-->
+        <!--<table tableName="community_admin" domainObjectName="Chairman"></table>-->
+        <!--//7.用户申请社团表-->
+        <!--<table tableName="temporary_apply_community" domainObjectName="ApplyCommunity"></table>-->
+        <!--//8.用户和活动的多对多关联表-->
+        <!--<table tableName="member_activity" domainObjectName="DdActMem"></table>-->
+        <!--//9.用户和社团的多对多关联表-->
+        <!--<table tableName="dd_com_member" domainObjectName="DdComMem"></table>-->
+    </context>
+</generatorConfiguration>

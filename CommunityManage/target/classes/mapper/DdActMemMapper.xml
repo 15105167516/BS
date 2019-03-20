@@ -1,0 +1,217 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.suke.communitymanage.dao.DdActMemMapper">
+  <resultMap id="BaseResultMap" type="com.suke.communitymanage.bean.DdActMem">
+    <id column="id" jdbcType="INTEGER" property="id" />
+    <result column="mem_id" jdbcType="VARCHAR" property="memId" />
+    <result column="activity_id" jdbcType="INTEGER" property="activityId" />
+  </resultMap>
+  <resultMap id="SelfResultMap" extends="BaseResultMap" type="com.suke.communitymanage.bean.DdActMem">
+    <association property="activity" javaType="com.suke.communitymanage.bean.Activity" resultMap="com.suke.communitymanage.dao.ActivityMapper.SelfResultMap1">
+
+    </association>
+  </resultMap>
+  <sql id="Example_Where_Clause">
+    <where>
+      <foreach collection="oredCriteria" item="criteria" separator="or">
+        <if test="criteria.valid">
+          <trim prefix="(" prefixOverrides="and" suffix=")">
+            <foreach collection="criteria.criteria" item="criterion">
+              <choose>
+                <when test="criterion.noValue">
+                  and ${criterion.condition}
+                </when>
+                <when test="criterion.singleValue">
+                  and ${criterion.condition} #{criterion.value}
+                </when>
+                <when test="criterion.betweenValue">
+                  and ${criterion.condition} #{criterion.value} and #{criterion.secondValue}
+                </when>
+                <when test="criterion.listValue">
+                  and ${criterion.condition}
+                  <foreach close=")" collection="criterion.value" item="listItem" open="(" separator=",">
+                    #{listItem}
+                  </foreach>
+                </when>
+              </choose>
+            </foreach>
+          </trim>
+        </if>
+      </foreach>
+    </where>
+  </sql>
+  <sql id="Update_By_Example_Where_Clause">
+    <where>
+      <foreach collection="example.oredCriteria" item="criteria" separator="or">
+        <if test="criteria.valid">
+          <trim prefix="(" prefixOverrides="and" suffix=")">
+            <foreach collection="criteria.criteria" item="criterion">
+              <choose>
+                <when test="criterion.noValue">
+                  and ${criterion.condition}
+                </when>
+                <when test="criterion.singleValue">
+                  and ${criterion.condition} #{criterion.value}
+                </when>
+                <when test="criterion.betweenValue">
+                  and ${criterion.condition} #{criterion.value} and #{criterion.secondValue}
+                </when>
+                <when test="criterion.listValue">
+                  and ${criterion.condition}
+                  <foreach close=")" collection="criterion.value" item="listItem" open="(" separator=",">
+                    #{listItem}
+                  </foreach>
+                </when>
+              </choose>
+            </foreach>
+          </trim>
+        </if>
+      </foreach>
+    </where>
+  </sql>
+  <sql id="Base_Column_List">
+    id, mem_id, activity_id
+  </sql>
+  <sql id="ComInfoAndMemberInfo">
+    ma.*,ca.*,ci.*
+  </sql>
+  <!--通过用户id获取以及输入的条件查出参加过的已经结束的活动-->
+  <select id="LikeSelectActByUserId" parameterType="java.lang.String" resultMap="SelfResultMap">
+    select
+    <include refid="ComInfoAndMemberInfo" />
+    from (member_activity ma inner join com_activity ca on ma.activity_id=ca.id
+    )
+    inner join community_info ci on ca.activiy_commity_id=ci.com_id
+    where ma.mem_id=#{arg0} and ca.activity_end_time &lt; now() and
+    CONCAT(ca.activity_theme,ci.com_name) LIKE CONCAT('%',#{arg1},'%')
+  </select>
+  <!--通过用户id查出已经参加的所有活动-->
+  <select id="selectActByUserId" parameterType="java.lang.String" resultMap="SelfResultMap">
+    select
+    <include refid="ComInfoAndMemberInfo" />
+    from (member_activity ma inner join com_activity ca on ma.activity_id=ca.id
+    )
+    inner join community_info ci on ca.activiy_commity_id=ci.com_id
+    where ma.mem_id=#{memid} and ca.activity_end_time &lt; now()
+  </select>
+  <select id="selectByExample" parameterType="com.suke.communitymanage.bean.DdActMemExample" resultMap="BaseResultMap">
+    select
+    <if test="distinct">
+      distinct
+    </if>
+    <include refid="Base_Column_List" />
+    from member_activity
+    <if test="_parameter != null">
+      <include refid="Example_Where_Clause" />
+    </if>
+    <if test="orderByClause != null">
+      order by ${orderByClause}
+    </if>
+  </select>
+  <select id="selectByPrimaryKey" parameterType="java.lang.Integer" resultMap="BaseResultMap">
+    select 
+    <include refid="Base_Column_List" />
+    from member_activity
+    where id = #{id,jdbcType=INTEGER}
+  </select>
+  <!--通过用户id和社团id删除对应的活动-->
+  <delete id="deleteByComIDMemId">
+    delete ma.* from (dd_com_member dcm inner join com_activity ca on
+                                                                      dcm.com_id = ca.activiy_commity_id and
+                                                                      dcm.member_id = #{memid} and
+                                                                      dcm.com_id = #{comid}) inner join
+      member_activity ma on ma.activity_id = ca.id and
+                            ma.mem_id = #{memid}
+  </delete>
+  <delete id="deleteByPrimaryKey" parameterType="java.lang.Integer">
+    delete from member_activity
+    where id = #{id,jdbcType=INTEGER}
+  </delete>
+  <delete id="deleteByExample" parameterType="com.suke.communitymanage.bean.DdActMemExample">
+    delete from member_activity
+    <if test="_parameter != null">
+      <include refid="Example_Where_Clause" />
+    </if>
+  </delete>
+  <insert id="insert" parameterType="com.suke.communitymanage.bean.DdActMem">
+    insert into member_activity (id, mem_id, activity_id
+      )
+    values (#{id,jdbcType=INTEGER}, #{memId,jdbcType=VARCHAR}, #{activityId,jdbcType=INTEGER}
+      )
+  </insert>
+  <insert id="insertSelective" parameterType="com.suke.communitymanage.bean.DdActMem">
+    insert into member_activity
+    <trim prefix="(" suffix=")" suffixOverrides=",">
+      <if test="id != null">
+        id,
+      </if>
+      <if test="memId != null">
+        mem_id,
+      </if>
+      <if test="activityId != null">
+        activity_id,
+      </if>
+    </trim>
+    <trim prefix="values (" suffix=")" suffixOverrides=",">
+      <if test="id != null">
+        #{id,jdbcType=INTEGER},
+      </if>
+      <if test="memId != null">
+        #{memId,jdbcType=VARCHAR},
+      </if>
+      <if test="activityId != null">
+        #{activityId,jdbcType=INTEGER},
+      </if>
+    </trim>
+  </insert>
+  <select id="countByExample" parameterType="com.suke.communitymanage.bean.DdActMemExample" resultType="java.lang.Long">
+    select count(*) from member_activity
+    <if test="_parameter != null">
+      <include refid="Example_Where_Clause" />
+    </if>
+  </select>
+  <update id="updateByExampleSelective" parameterType="map">
+    update member_activity
+    <set>
+      <if test="record.id != null">
+        id = #{record.id,jdbcType=INTEGER},
+      </if>
+      <if test="record.memId != null">
+        mem_id = #{record.memId,jdbcType=VARCHAR},
+      </if>
+      <if test="record.activityId != null">
+        activity_id = #{record.activityId,jdbcType=INTEGER},
+      </if>
+    </set>
+    <if test="_parameter != null">
+      <include refid="Update_By_Example_Where_Clause" />
+    </if>
+  </update>
+  <update id="updateByExample" parameterType="map">
+    update member_activity
+    set id = #{record.id,jdbcType=INTEGER},
+      mem_id = #{record.memId,jdbcType=VARCHAR},
+      activity_id = #{record.activityId,jdbcType=INTEGER}
+    <if test="_parameter != null">
+      <include refid="Update_By_Example_Where_Clause" />
+    </if>
+  </update>
+  <update id="updateByPrimaryKeySelective" parameterType="com.suke.communitymanage.bean.DdActMem">
+    update member_activity
+    <set>
+      <if test="memId != null">
+        mem_id = #{memId,jdbcType=VARCHAR},
+      </if>
+      <if test="activityId != null">
+        activity_id = #{activityId,jdbcType=INTEGER},
+      </if>
+    </set>
+    where id = #{id,jdbcType=INTEGER}
+  </update>
+  <update id="updateByPrimaryKey" parameterType="com.suke.communitymanage.bean.DdActMem">
+    update member_activity
+    set mem_id = #{memId,jdbcType=VARCHAR},
+      activity_id = #{activityId,jdbcType=INTEGER}
+    where id = #{id,jdbcType=INTEGER}
+  </update>
+</mapper>

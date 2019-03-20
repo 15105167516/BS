@@ -1,0 +1,219 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.suke.communitymanage.dao.ApplyCommunityMapper">
+  <resultMap id="BaseResultMap" type="com.suke.communitymanage.bean.ApplyCommunity">
+    <id column="tem_user_id" jdbcType="VARCHAR" property="temUserId" />
+    <id column="tem_com_id" jdbcType="INTEGER" property="temComId" />
+    <result column="apply_time" jdbcType="VARCHAR" property="applyTime" />
+    <result column="status" jdbcType="INTEGER" property="status" />
+  </resultMap>
+  <resultMap id="BaseResultMap1" extends="BaseResultMap" type="com.suke.communitymanage.bean.ApplyCommunity">
+   <association property="community" javaType="com.suke.communitymanage.bean.Community" resultMap="com.suke.communitymanage.dao.CommunityMapper.BaseResultMap">
+
+   </association>
+  </resultMap>
+  <sql id="Example_Where_Clause">
+    <where>
+      <foreach collection="oredCriteria" item="criteria" separator="or">
+        <if test="criteria.valid">
+          <trim prefix="(" prefixOverrides="and" suffix=")">
+            <foreach collection="criteria.criteria" item="criterion">
+              <choose>
+                <when test="criterion.noValue">
+                  and ${criterion.condition}
+                </when>
+                <when test="criterion.singleValue">
+                  and ${criterion.condition} #{criterion.value}
+                </when>
+                <when test="criterion.betweenValue">
+                  and ${criterion.condition} #{criterion.value} and #{criterion.secondValue}
+                </when>
+                <when test="criterion.listValue">
+                  and ${criterion.condition}
+                  <foreach close=")" collection="criterion.value" item="listItem" open="(" separator=",">
+                    #{listItem}
+                  </foreach>
+                </when>
+              </choose>
+            </foreach>
+          </trim>
+        </if>
+      </foreach>
+    </where>
+  </sql>
+  <sql id="Update_By_Example_Where_Clause">
+    <where>
+      <foreach collection="example.oredCriteria" item="criteria" separator="or">
+        <if test="criteria.valid">
+          <trim prefix="(" prefixOverrides="and" suffix=")">
+            <foreach collection="criteria.criteria" item="criterion">
+              <choose>
+                <when test="criterion.noValue">
+                  and ${criterion.condition}
+                </when>
+                <when test="criterion.singleValue">
+                  and ${criterion.condition} #{criterion.value}
+                </when>
+                <when test="criterion.betweenValue">
+                  and ${criterion.condition} #{criterion.value} and #{criterion.secondValue}
+                </when>
+                <when test="criterion.listValue">
+                  and ${criterion.condition}
+                  <foreach close=")" collection="criterion.value" item="listItem" open="(" separator=",">
+                    #{listItem}
+                  </foreach>
+                </when>
+              </choose>
+            </foreach>
+          </trim>
+        </if>
+      </foreach>
+    </where>
+  </sql>
+  <sql id="Base_Column_List">
+    tem_user_id, tem_com_id, apply_time, status
+  </sql>
+  <sql id="Slef_com">
+    tac.*,ci.*
+  </sql>
+  <!--通过输入的内容模糊查询获取申请的社团以及社团信息-->
+  <select id="LikeSearchComInfoByIdAndCondition"  resultMap="BaseResultMap1">
+    select
+    <include refid="Slef_com" />
+    from temporary_apply_community tac,community_info ci
+    where tac.tem_user_id = #{temUserId,jdbcType=VARCHAR} and  tac.tem_com_id=ci.com_id
+    and CONCAT(tac.tem_com_id,tac.status,ci.com_name) LIKE CONCAT('%',#{condition},'%')
+  </select>
+  <!--通过用户id获取申请的社团以及社团信息-->
+  <select id="selectComInfoById"  resultMap="BaseResultMap1">
+    select
+    <include refid="Slef_com" />
+    from temporary_apply_community tac,community_info ci
+    where tac.tem_user_id = #{temUserId,jdbcType=VARCHAR} and  tac.tem_com_id=ci.com_id
+  </select>
+  <select id="selectByExample" parameterType="com.suke.communitymanage.bean.ApplyCommunityExample" resultMap="BaseResultMap">
+    select
+    <if test="distinct">
+      distinct
+    </if>
+    <include refid="Base_Column_List" />
+    from temporary_apply_community
+    <if test="_parameter != null">
+      <include refid="Example_Where_Clause" />
+    </if>
+    <if test="orderByClause != null">
+      order by ${orderByClause}
+    </if>
+  </select>
+  <select id="selectByPrimaryKey" parameterType="com.suke.communitymanage.bean.ApplyCommunityKey" resultMap="BaseResultMap">
+    select
+    <include refid="Base_Column_List" />
+    from temporary_apply_community
+    where tem_user_id = #{temUserId,jdbcType=VARCHAR}
+      and tem_com_id = #{temComId,jdbcType=INTEGER}
+  </select>
+  <delete id="deleteByPrimaryKey" parameterType="com.suke.communitymanage.bean.ApplyCommunityKey">
+    delete from temporary_apply_community
+    where tem_user_id = #{temUserId,jdbcType=VARCHAR}
+      and tem_com_id = #{temComId,jdbcType=INTEGER}
+  </delete>
+  <delete id="deleteByExample" parameterType="com.suke.communitymanage.bean.ApplyCommunityExample">
+    delete from temporary_apply_community
+    <if test="_parameter != null">
+      <include refid="Example_Where_Clause" />
+    </if>
+  </delete>
+  <insert id="insert" parameterType="com.suke.communitymanage.bean.ApplyCommunity">
+    insert into temporary_apply_community (tem_user_id, tem_com_id, apply_time, 
+      status)
+    values (#{temUserId,jdbcType=VARCHAR}, #{temComId,jdbcType=INTEGER}, #{applyTime,jdbcType=VARCHAR}, 
+      #{status,jdbcType=INTEGER})
+  </insert>
+  <insert id="insertSelective" parameterType="com.suke.communitymanage.bean.ApplyCommunity">
+    insert into temporary_apply_community
+    <trim prefix="(" suffix=")" suffixOverrides=",">
+      <if test="temUserId != null">
+        tem_user_id,
+      </if>
+      <if test="temComId != null">
+        tem_com_id,
+      </if>
+      <if test="applyTime != null">
+        apply_time,
+      </if>
+      <if test="status != null">
+        status,
+      </if>
+    </trim>
+    <trim prefix="values (" suffix=")" suffixOverrides=",">
+      <if test="temUserId != null">
+        #{temUserId,jdbcType=VARCHAR},
+      </if>
+      <if test="temComId != null">
+        #{temComId,jdbcType=INTEGER},
+      </if>
+      <if test="applyTime != null">
+        #{applyTime,jdbcType=VARCHAR},
+      </if>
+      <if test="status != null">
+        #{status,jdbcType=INTEGER},
+      </if>
+    </trim>
+  </insert>
+  <select id="countByExample" parameterType="com.suke.communitymanage.bean.ApplyCommunityExample" resultType="java.lang.Long">
+    select count(*) from temporary_apply_community
+    <if test="_parameter != null">
+      <include refid="Example_Where_Clause" />
+    </if>
+  </select>
+  <update id="updateByExampleSelective" parameterType="map">
+    update temporary_apply_community
+    <set>
+      <if test="record.temUserId != null">
+        tem_user_id = #{record.temUserId,jdbcType=VARCHAR},
+      </if>
+      <if test="record.temComId != null">
+        tem_com_id = #{record.temComId,jdbcType=INTEGER},
+      </if>
+      <if test="record.applyTime != null">
+        apply_time = #{record.applyTime,jdbcType=VARCHAR},
+      </if>
+      <if test="record.status != null">
+        status = #{record.status,jdbcType=INTEGER},
+      </if>
+    </set>
+    <if test="_parameter != null">
+      <include refid="Update_By_Example_Where_Clause" />
+    </if>
+  </update>
+  <update id="updateByExample" parameterType="map">
+    update temporary_apply_community
+    set tem_user_id = #{record.temUserId,jdbcType=VARCHAR},
+      tem_com_id = #{record.temComId,jdbcType=INTEGER},
+      apply_time = #{record.applyTime,jdbcType=VARCHAR},
+      status = #{record.status,jdbcType=INTEGER}
+    <if test="_parameter != null">
+      <include refid="Update_By_Example_Where_Clause" />
+    </if>
+  </update>
+  <update id="updateByPrimaryKeySelective" parameterType="com.suke.communitymanage.bean.ApplyCommunity">
+    update temporary_apply_community
+    <set>
+      <if test="applyTime != null">
+        apply_time = #{applyTime,jdbcType=VARCHAR},
+      </if>
+      <if test="status != null">
+        status = #{status,jdbcType=INTEGER},
+      </if>
+    </set>
+    where tem_user_id = #{temUserId,jdbcType=VARCHAR}
+      and tem_com_id = #{temComId,jdbcType=INTEGER}
+  </update>
+  <update id="updateByPrimaryKey" parameterType="com.suke.communitymanage.bean.ApplyCommunity">
+    update temporary_apply_community
+    set apply_time = #{applyTime,jdbcType=VARCHAR},
+      status = #{status,jdbcType=INTEGER}
+    where tem_user_id = #{temUserId,jdbcType=VARCHAR}
+      and tem_com_id = #{temComId,jdbcType=INTEGER}
+  </update>
+</mapper>
