@@ -39,9 +39,11 @@ public class CommunityService {
         Map paramMap = new HashMap();
         paramMap.put("comId", com_id);
         paramMap.put("memid", user_id);
-
+        System.out.println(com_id+"__________"+user_id);
         Community community = communityMapper.selectCommunityAndMemberById(paramMap);
         //System.out.print(com_id+"%%%%"+user_id);
+        System.out.println(community);
+
         if (community==null){
             return true;
         }else {

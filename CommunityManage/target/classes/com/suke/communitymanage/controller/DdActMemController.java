@@ -2,17 +2,17 @@ package com.suke.communitymanage.controller;
 
 import com.github.pagehelper.PageHelper;
 import com.github.pagehelper.PageInfo;
+import com.suke.communitymanage.bean.Activity;
 import com.suke.communitymanage.bean.DdActMem;
 import com.suke.communitymanage.service.DdActMemService;
+import com.suke.communitymanage.utils.Msg;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestMethod;
-import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.*;
 
 
+import javax.validation.Valid;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
@@ -23,12 +23,103 @@ public class DdActMemController {
     @Autowired
     DdActMemService ddActMemService;
 
+
+
+
+
+
+
+
+
+    /**
+     * 用户插入到社团活动
+     */
+    @RequestMapping(value = "/userInsertActivity/{user_id}/{act_id}/{act_number}", method = RequestMethod.POST)
+@ResponseBody
+    public Msg userInsertActivity(Activity activity, DdActMem ddActMem, @PathVariable("act_number") Integer act_number, @PathVariable("user_id") String user_id, @PathVariable("act_id") Integer act_id) {
+        ddActMem.setActivityId(act_id);
+        ddActMem.setMemId(user_id);
+        activity.setActiId(act_id);
+        activity.setActPeopleCount(act_number);
+        //用户参与活动
+        boolean b=ddActMemService.userInsertActivity(ddActMem,activity);
+
+        if (b==true){
+
+            return Msg.success();
+        }else {
+            return Msg.fail();
+        }
+    }
+
+
+
+
+
+
+
+
+
+
+    @RequestMapping(value = "/likeUnderwayAct/{mem_id}/{condition}", method = RequestMethod.GET)
+    public String likeUnderwayAct(@RequestParam(value = "pn", defaultValue = "1")Integer pn,@PathVariable("condition") String condition,@PathVariable("mem_id") String mem_id, Model model) {
+        PageHelper.startPage(pn, 3);
+        // startPage后面紧跟的这个查询就是一个分页查询
+        List<DdActMem> ddActMemList = ddActMemService.likeUnderwayAct(mem_id,condition);
+
+        PageInfo page = new PageInfo(ddActMemList, 3);
+        List<DdActMem> list = page.getList();
+        //判断是否点击搜索按钮
+        model.addAttribute("LikeCheck", 1);
+        //保存查询的条件
+        model.addAttribute("condition", condition);
+        model.addAttribute("underwayList", list);
+        //封装对点击查询的判断,显示哪个div
+        model.addAttribute("check", "4");
+        //封装分页信息
+        model.addAttribute("page", page);
+        return "common_user/personal_center";
+    }
+
+
+
+
+
+
+    @RequestMapping(value = "/getUnderwayAct/{mem_id}", method = RequestMethod.GET)
+    public String getUnderwayAct(@RequestParam(value = "pn", defaultValue = "1") Integer pn, @PathVariable("mem_id") String mem_id, Model model) {
+        PageHelper.startPage(pn, 3);
+        // startPage后面紧跟的这个查询就是一个分页查询
+        List<DdActMem> ddActMemList = ddActMemService.getUnderwayAct(mem_id);
+
+        PageInfo page = new PageInfo(ddActMemList, 3);
+        List<DdActMem> list = page.getList();
+        model.addAttribute("underwayList", list);
+        //封装对点击查询的判断
+        model.addAttribute("check", "4");
+        //封装分页信息
+        model.addAttribute("page", page);
+        return "common_user/personal_center";
+    }
+
+
+
+
+
+
+
+
+
+
+
+
+
     @RequestMapping(value = "/LikeSelectActByUserId/{mem_id}/{condition}", method = RequestMethod.GET)
-    public String LikeSelectActByUserId(@PathVariable("condition") String condition, @PathVariable("mem_id") String mem_id, Model model) {
+    public String LikeSelectActByUserId(@RequestParam(value = "pn", defaultValue = "1")Integer pn,@PathVariable("condition") String condition, @PathVariable("mem_id") String mem_id, Model model) {
         // 这不是一个分页查询；
         // 引入PageHelper分页插件
         // 在查询之前只需要调用，传入页码，以及每页的大小
-        PageHelper.startPage(1, 3);
+        PageHelper.startPage(pn, 3);
         // startPage后面紧跟的这个查询就是一个分页查询
         List<DdActMem> ddActMemList = ddActMemService.LikeSelectActByUserId(mem_id,condition);
 
@@ -39,6 +130,10 @@ public class DdActMemController {
 
         List<DdActMem> list = page.getList();
         model.addAttribute("ActivityList", list);
+        //判断是否点击搜索按钮
+        model.addAttribute("LikeCheck", 1);
+        //保存查询的条件
+        model.addAttribute("condition", condition);
         //封装对点击查询的判断
         model.addAttribute("check", "3");
         //封装分页信息

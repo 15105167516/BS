@@ -75,11 +75,31 @@
   <sql id="ComInfoAndMemberInfo">
     ma.*,ca.*,ci.*
   </sql>
+  <!--通过用户id和条件模糊获取进行中的活动-->
+  <select id="selectLikeUnderwayAct" parameterType="java.lang.String" resultMap="SelfResultMap">
+    select
+    <include refid="ComInfoAndMemberInfo" />
+    from (member_activity ma inner join com_activity ca on ma.activity_id=ca.acti_id
+    )
+    inner join community_info ci on ca.activiy_commity_id=ci.com_id
+    where ma.mem_id=#{arg0} and ca.activity_end_time &gt; now() and ca.activity_start_time  &lt;now()
+    and CONCAT(ca.activity_theme,ci.com_name) LIKE CONCAT('%',#{arg1},'%')
+  </select>
+  <!--通过用户id获取以及输入的条件查出进行中的活动-->
+  <select id="selectUnderwayActByUserId" parameterType="java.lang.String" resultMap="SelfResultMap">
+    select
+    <include refid="ComInfoAndMemberInfo" />
+    from (member_activity ma inner join com_activity ca on ma.activity_id=ca.acti_id
+    )
+    inner join community_info ci on ca.activiy_commity_id=ci.com_id
+    where ma.mem_id=#{memid} and ca.activity_end_time &gt; now() and ca.activity_start_time  &lt;now()
+
+  </select>
   <!--通过用户id获取以及输入的条件查出参加过的已经结束的活动-->
   <select id="LikeSelectActByUserId" parameterType="java.lang.String" resultMap="SelfResultMap">
     select
     <include refid="ComInfoAndMemberInfo" />
-    from (member_activity ma inner join com_activity ca on ma.activity_id=ca.id
+    from (member_activity ma inner join com_activity ca on ma.activity_id=ca.acti_id
     )
     inner join community_info ci on ca.activiy_commity_id=ci.com_id
     where ma.mem_id=#{arg0} and ca.activity_end_time &lt; now() and
@@ -89,7 +109,7 @@
   <select id="selectActByUserId" parameterType="java.lang.String" resultMap="SelfResultMap">
     select
     <include refid="ComInfoAndMemberInfo" />
-    from (member_activity ma inner join com_activity ca on ma.activity_id=ca.id
+    from (member_activity ma inner join com_activity ca on ma.activity_id=ca.acti_id
     )
     inner join community_info ci on ca.activiy_commity_id=ci.com_id
     where ma.mem_id=#{memid} and ca.activity_end_time &lt; now()
@@ -120,7 +140,7 @@
                                                                       dcm.com_id = ca.activiy_commity_id and
                                                                       dcm.member_id = #{memid} and
                                                                       dcm.com_id = #{comid}) inner join
-      member_activity ma on ma.activity_id = ca.id and
+      member_activity ma on ma.activity_id = ca.acti_id and
                             ma.mem_id = #{memid}
   </delete>
   <delete id="deleteByPrimaryKey" parameterType="java.lang.Integer">

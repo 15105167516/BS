@@ -12,6 +12,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -33,6 +34,64 @@ public class MapperTest {
     @Autowired
     DdComMemMapper ddComMemMapper;
 
+
+    @Test
+    public void testRemove(){
+//        //用户参加过未开始的活动
+//        List<Activity> list1=activityMapper.selectActivityJoined("152040135201");
+//        Map<Integer,Activity> map=new HashMap<>();
+//        //未开始的所有活动
+//        List<Activity> list2=activityMapper.selectActivityRecommend();
+//        for (Activity a:list2) {
+//            map.put(a.getActiId(),a);
+//        }
+//        System.out.println(list2.size());
+//        for (Activity a:list1) {
+//            if (map.containsKey(a.getActiId())){
+//                list2.remove(map.get(a.getActiId()));
+//            }
+//        }
+//
+//        //标记label重合数量
+//        int mark = 0;
+//        //现在的list2就是用户未参加且未开始的活动
+//        //下面就要把用户的label和活动的label进行比较，如果相同数量大于二，就放入新的list中
+//        String[] str = "唱歌 跳舞 画画 游泳".split(" ");
+//        List<Activity> list3 = new ArrayList<>();
+//        for (Activity a : list2) {
+//            mark=0;
+//            for (String s : str) {
+//                if (a.getActivityLabel().contains(s)) {
+//                    mark++;
+//                }
+//
+//                if (mark >= 2) {
+//                    list3.add(a);
+//
+//                    break;
+//                }
+//            }
+//         }
+//        System.out.println(list1.size());
+//        System.out.println(list2.size());
+//        System.out.println(list3);
+    }
+
+
+    //测试查询用户已经进行的活动；
+    @Test
+    public void UnderwayActByUserId(){
+
+        List<DdActMem> ddActMemList = ddActMemMapper.selectUnderwayActByUserId("152040135201");
+        System.out.println(ddActMemList);
+    }
+    //测试查询用户加入的活动的评价；
+    @Test
+    public void getEvaluates(){
+
+        List<Evaluate> list=   evaluateMapper.selectEvaByActivityId(3);
+        System.out.println(list);
+    }
     //测试用户加入的活动；
     @Test
     public void getjoinedActivity(){

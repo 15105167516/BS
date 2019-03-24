@@ -115,10 +115,14 @@ $(function () {
                 $("#commom3").css('display', 'block');
                 break;
             case "4":
+                //显示第一页参加结束的活动
+                window.location.href = "http://localhost:8080/CommunityManage/ddActMember/getUnderwayAct/" + $('#input').val();
                 $("#commom4").siblings().css('display', 'none');
                 $("#commom4").css('display', 'block');
                 break;
             default:
+                //活动推荐，第一页
+                window.location.href = "http://localhost:8080/CommunityManage/activity/getActivityRecommend/" + $('#input').val() + "/" + $("#userlabel").val();
                 $("#commom5").siblings().css('display', 'none');
                 $("#commom5").css('display', 'block');
         }
@@ -314,13 +318,16 @@ $(function () {
     //查看活动详情
     $(document).on("click", ".act_info_btn", function () {
         var act_id = $(this).attr("act_id");
+
         $.ajax({
-            url: path_root + "/activity/getActivityCommunity/"  + act_id,
+            url: path_root + "/activity/getActivityCommunity/" + act_id,
             type: "GET",
             success: function (result) {
+
+                console.log(result);
                 var activity = result.extend.activity;
                 var community = activity.community;
-                var chariman=community.chairman;
+                var chariman = community.chairman;
                 //活动详情
                 var activityIntroduction = activity.activityIntroduction;
                 $(".act_introduction").empty();
@@ -348,7 +355,7 @@ $(function () {
                 $(".act_number").empty();
                 $(".act_number").html(actPeopleCount);
                 //活动开始时间
-                var activityStartTime =datetimeFormat(activity.activityStartTime);
+                var activityStartTime = datetimeFormat(activity.activityStartTime);
                 $(".act_start_time").empty();
                 $(".act_start_time").html(activityStartTime);
                 //活动结束时间
@@ -362,12 +369,13 @@ $(function () {
         }, 1000)
 
     })
+
     /*
 *将long类型转换为时间
 * 时间格式化工具
 * 把Long类型的1527672756454日期还原yyyy-MM-dd 00:00:00格式日期
 */
-    function datetimeFormat(longTypeDate){
+    function datetimeFormat(longTypeDate) {
         var dateTypeDate = "";
         var date = new Date();
         date.setTime(longTypeDate);
@@ -379,11 +387,12 @@ $(function () {
         dateTypeDate += ":" + getSeconds(date);     //分
         return dateTypeDate;
     }
+
     /*
      * 时间格式化工具
      * 把Long类型的1527672756454日期还原yyyy-MM-dd格式日期
      */
-    function dateFormat(longTypeDate){
+    function dateFormat(longTypeDate) {
         var dateTypeDate = "";
         var date = new Date();
         date.setTime(longTypeDate);
@@ -392,50 +401,380 @@ $(function () {
         dateTypeDate += "-" + getDay(date);   //日
         return dateTypeDate;
     }
+
     //返回 01-12 的月份值
-    function getMonth(date){
+    function getMonth(date) {
         var month = "";
         month = date.getMonth() + 1; //getMonth()得到的月份是0-11
-        if(month<10){
+        if (month < 10) {
             month = "0" + month;
         }
         return month;
     }
+
     //返回01-30的日期
-    function getDay(date){
+    function getDay(date) {
         var day = "";
         day = date.getDate();
-        if(day<10){
+        if (day < 10) {
             day = "0" + day;
         }
         return day;
     }
+
     //小时
-    function getHours(date){
+    function getHours(date) {
         var hours = "";
         hours = date.getHours();
-        if(hours<10){
+        if (hours < 10) {
             hours = "0" + hours;
         }
         return hours;
     }
+
     //分
-    function getMinutes(date){
+    function getMinutes(date) {
         var minute = "";
         minute = date.getMinutes();
-        if(minute<10){
+        if (minute < 10) {
             minute = "0" + minute;
         }
         return minute;
     }
+
     //秒
-    function getSeconds(date){
+    function getSeconds(date) {
         var second = "";
         second = date.getSeconds();
-        if(second<10){
+        if (second < 10) {
             second = "0" + second;
         }
         return second;
+    }
+
+//初始化星星评价
+    $('#total_score').rating({
+        min: 0,
+        max: 5,
+        step: 0.1,
+        size: 'md',
+        showClear: false,
+        readonly: true
+    });
+    //自己为活动打的分数
+    $('#self_evaluate').rating({
+        min: 0,
+        max: 5,
+        step: 0.1,
+        size: 'xs',
+        showClear: false
+    });
+    //查看活动评价
+    $(document).on("click", ".evaluate_btn", function () {
+        $(".comment_textarea").val("");
+        $('#self_evaluate').rating('reset');
+        // $('#total_score').rating('update', 3); //这样子把值存进去。
+        //$("#act_evaluate_modal").modal('show');
+        //  var ratingValue = $('#total_score').rating().val();
+        var act_id = $(this).attr("act_id");
+        //1、将增加评论添加活动id属性
+        $(".comment_btn").attr("act_id", act_id);
+        //2、获取活动平均得分，并赋值
+        build_average_score(act_id);
+        //3、去首页
+        to_page(act_id, 1);
+
+    })
+
+    function build_average_score(act_id) {
+
+        $.ajax({
+            url: path_root + "/evaluate/getEvaluateScoreByActId/" + act_id,
+            type: "GET",
+            success: function (result) {
+
+                $('#total_score').rating('update', result.extend.average_score); //这样子把值存进去。
+            }
+        });
+    }
+
+    function to_page(act_id, pn) {
+        $.ajax({
+            url: path_root + "/evaluate/getActivityEvaluate/" + act_id,
+            data: "pn=" + pn,
+            type: "GET",
+            success: function (result) {
+
+
+                //1、解析并显示活动评价内容
+                build_comments(result);
+                //2、解析并显示分页信息
+                build_page_info(result);
+                //3、解析显示分页条数据;
+                build_page_nav(act_id, result);
+            }
+        });
+    }
+
+    function build_comments(result) {
+        //清空table表格
+        $(".comment_div").empty();
+
+
+        var comments = result.extend.pageInfo.list;
+        $.each(comments, function (index, item) {
+
+            //评论内容div
+            var outline = $("<div class='row'></div>");
+            var comment_content = $("<div class='col-md-12' style=\"font-family: '微软雅黑', Arial;\"></div>").append(item.memEva);
+            outline.append(comment_content).appendTo(".comment_div");
+            $("<br>").appendTo(".comment_div")
+//评论成员姓名
+            var name = $("<span></span>").append(item.member.memberName);
+            var mem_name_outline = $("<div class='col-md-4'>评论成员:</div>").append(name);
+//评论成员评分
+            var comments = $("<div class='col-md-3'>&nbsp;&nbsp;评分：</div>")
+            var score = $("<span></span>").append(item.evaScore);
+            var comment_outline = comments.append(score).append("分");
+//评论时间
+            var comment_time = $("<div class=\"col-md-5\">评论时间:</div>");
+            var time_content = $("<span></span>").append(item.evaTime);
+            var time_outline = comment_time.append(time_content);
+//放入div
+            $(outline).append(comment_outline).append(mem_name_outline).append(time_outline).appendTo(".comment_div");
+            $("<br>").appendTo(".comment_div")
+
+
+        });
+
+    }
+
+    function build_page_info(result) {
+
+        //清空表格
+        $(".nav-comment").empty();
+        $(".nav-comment").append("当前" + result.extend.pageInfo.pageNum + "页,总" +
+            result.extend.pageInfo.pages + "页,总" +
+            result.extend.pageInfo.total + "条记录")
+        totalRecord = result.extend.pageInfo.total;
+        currentPage = result.extend.pageInfo.pageNum;
+    }
+
+    //解析显示分页条，点击分页要能去下一页....
+    function build_page_nav(act_id, result) {
+        //page_nav_area
+        var ul = $("<ul></ul>").addClass("am-pagination");
+
+        //构建元素
+        var firstPageLi = $("<li></li>").append($("<a></a>").append("首页").attr("href", "#"));
+        var prePageLi = $("<li></li>").append($("<a></a>").append("&laquo;"));
+        if (result.extend.pageInfo.hasPreviousPage == false) {
+            firstPageLi.addClass("disabled");
+            prePageLi.addClass("disabled");
+        } else {
+            //为元素添加点击翻页的事件
+            firstPageLi.click(function () {
+                to_page(act_id, 1);
+            });
+            prePageLi.click(function () {
+                to_page(act_id, result.extend.pageInfo.pageNum - 1);
+            });
+        }
+
+
+        var nextPageLi = $("<li></li>").append($("<a></a>").append("&raquo;"));
+        var lastPageLi = $("<li></li>").append($("<a></a>").append("末页").attr("href", "#"));
+        if (result.extend.pageInfo.hasNextPage == false) {
+            nextPageLi.addClass("disabled");
+            lastPageLi.addClass("disabled");
+        } else {
+            nextPageLi.click(function () {
+                to_page(act_id, result.extend.pageInfo.pageNum + 1);
+            });
+            lastPageLi.click(function () {
+                to_page(act_id, result.extend.pageInfo.pages);
+            });
+        }
+
+
+        //添加首页和前一页 的提示
+        ul.append(firstPageLi).append(prePageLi);
+        //1,2，3遍历给ul中添加页码提示
+        $.each(result.extend.pageInfo.navigatepageNums, function (index, item) {
+
+            var numLi = $("<li></li>").append($("<a></a>").append(item));
+            if (result.extend.pageInfo.pageNum == item) {
+                numLi.addClass("active");
+            }
+            numLi.click(function () {
+                to_page(act_id, item);
+            });
+            ul.append(numLi);
+        });
+        //添加下一页和末页 的提示
+        ul.append(nextPageLi).append(lastPageLi);
+
+        //把ul加入到nav
+        var navEle = $("<nav></nav>").append(ul);
+        var nav_out = $("<div class='am-fr nav_num'> </div>");
+        nav_out.append(navEle);
+        $(".nav-comment").append(nav_out);
+    }
+
+
+    //点击提交评论
+    $(document).on("click", ".comment_btn", function () {
+
+        var mem_id = user_id;
+        var comment_textarea = $(".comment_textarea").val().trim();
+        var ratingValue = $('#self_evaluate').rating().val();
+        //获取活动id
+        var act_id = $(this).attr("act_id");
+
+
+        if (ratingValue == "") {
+            toastr.warning("您没有对活动评价分数，请评分后提交")
+        } else {
+
+            if (comment_textarea.length <= 20) {
+                toastr.warning("评价内容必须大于20个子，小于50个字！")
+            } else {
+                //1.检查是否已经评价过了
+                checkIsEvaluate(mem_id, act_id, comment_textarea, ratingValue);
+            }
+
+        }
+    })
+
+    function checkIsEvaluate(mem_id, act_id, comment_textarea, ratingValue) {
+        $.ajax({
+            url: path_root + "/evaluate/checkIsEvaluate/" + mem_id + "/" + act_id,
+            type: "GET",
+            success: function (result) {
+
+                if (result.code == 100) {
+
+                    insertEvaluate(mem_id, act_id, comment_textarea, ratingValue);
+                } else {
+                    toastr.warning("您已经评价一次，不能参与评价")
+                }
+            }
+        });
+    }
+
+    function insertEvaluate(mem_id, act_id, comment_textarea, ratingValue) {
+        var insert_Evaluate = {
+            "memId": mem_id,
+            "actId": act_id,
+            "memEva": comment_textarea,
+            "evaScore": ratingValue
+        }
+
+        $.ajax({
+            url: path_root + "/evaluate/insertEvaluate",
+            type: "POST",
+            data: JSON.stringify(insert_Evaluate),
+            contentType: "application/json; charset=utf-8",
+            success: function (result) {
+
+                if (result.code == 100) {
+
+                    toastr.success("评论成功");
+                    //把评价数据初始化
+                    $(".comment_textarea").val("");
+                    $('#self_evaluate').rating('reset');
+
+                    //1、获取活动平均得分，并赋值
+                    build_average_score(act_id);
+                    //2、跳转到首页
+                    to_page(act_id, 1);
+                } else {
+                    toastr.fail("评论异常，请稍后再试，或者联系管理员！")
+                }
+            }
+        });
+    }
+
+
+    /*****************************************************************************************/
+    /*进行中的活动开始*/
+    //模糊查询实现搜索；
+    $(".underway_act_search_btn").click(function () {
+        var mem_id = user_id;
+        var condition = $(".underway_activity").val();
+
+        if (condition.trim() != "") {
+            window.location.href = path_root + "/ddActMember/likeUnderwayAct/" + mem_id + "/" + condition;
+        } else {
+            toastr.warning("搜索值不能为空")
+        }
+    })
+
+
+    //模糊查询实现推荐活动的查询；
+    $(".recommend_search_btn").click(function () {
+        var mem_id = user_id;
+        var condition = $(".recommend_search_input").val().trim();
+
+        if (condition.trim() != "") {
+            window.location.href = "http://localhost:8080/CommunityManage/activity/getLikeActivityRecommend/"
+                + $('#input').val() + "/" + $("#userlabel").val() + "/" + condition;
+        } else {
+            toastr.warning("搜索值不能为空")
+        }
+    })
+
+
+    //点击活动报名
+    $(document).on("click", ".act_register_btn", function () {
+        var memid = user_id;
+        var act_id = $(this).attr("act_id");
+        var com_id = $(this).attr("com_id");
+        var act_number=Number($(this).attr("act_number"))+1;
+alert(memid);
+        //判断是否属于此活动社团的人员
+        $.ajax({
+
+            url: path_root+"/community/checkIsMember/" + com_id + "/" + memid,
+            type: 'GET',
+            success: function (result) {
+//状态码   100-成功    200-失败
+                if (result.code == 100) {
+
+                    toastr.warning("您还不是此活动举办社团的成员，请前去首页申请加入社团！");
+
+
+                } else {
+                    if (confirm("您已经是该社团成员，是否直接加入活动？")) {
+                        joinActivity(memid, act_id,act_number);
+                    }
+
+                }
+
+            }
+        })
+    });
+
+
+    function joinActivity(memid, act_id,act_number) {
+        $.ajax({
+
+            url: path_root+"/ddActMember/userInsertActivity/" + memid + "/" + act_id+ "/"+act_number,
+            type: 'POST',
+            data:'',
+            success: function (result) {
+if (result.code==100){
+
+    toastr.success("参与成功");
+    setTimeout(function () {
+        window.location.href = "http://localhost:8080/CommunityManage/activity/getActivityRecommend/" + memid+ "/" + $("#userlabel").val();
+
+    }, 1500)
+}else {
+    toastr.success("加入异常");
+}
+            }
+        });
     }
 });
 

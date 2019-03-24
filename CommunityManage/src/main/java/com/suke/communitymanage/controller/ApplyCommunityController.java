@@ -30,16 +30,20 @@ public class ApplyCommunityController {
      * 模糊查找是否有对应的用户申请的所有社团；
      */
     @RequestMapping(value = "/LikeSearchApplyCommunity/{user_id}/{condition}",method = RequestMethod.GET)
-    public String LikeSearchApplyCommunity(@PathVariable("user_id")String user_id,@PathVariable("condition")String condition, Model model){
+    public String LikeSearchApplyCommunity(@RequestParam(value = "pn", defaultValue = "1")Integer pn,@PathVariable("user_id")String user_id,@PathVariable("condition")String condition, Model model){
         Map paramMap = new HashMap();
 
         paramMap.put("temUserId", user_id);
         paramMap.put("condition", condition);
-        PageHelper.startPage(1, 3);
+        PageHelper.startPage(pn, 3);
         List<ApplyCommunity> applyCommunities = applyCommunityService.LikeSearchApplyCommunity(paramMap);
         PageInfo page = new PageInfo(applyCommunities, 3);
         List<ApplyCommunity> list = page.getList();
         model.addAttribute("temp_apply_list", list);
+        //判断是否点击搜索按钮
+        model.addAttribute("LikeCheck", 1);
+        //保存查询的条件
+        model.addAttribute("condition", condition);
         //封装对点击查询的判断
         model.addAttribute("check", "2");
         //封装分页信息

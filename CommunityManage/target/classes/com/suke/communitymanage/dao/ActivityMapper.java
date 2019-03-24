@@ -10,7 +10,7 @@ public interface ActivityMapper {
 
     int deleteByExample(ActivityExample example);
 
-    int deleteByPrimaryKey(Integer id);
+    int deleteByPrimaryKey(Integer actiId);
 
     int insert(Activity record);
 
@@ -18,8 +18,16 @@ public interface ActivityMapper {
 
     List<Activity> selectByExample(ActivityExample example);
 
-    Activity selectByPrimaryKey(Integer id);
-    Activity  selectAct_Com_InfoById(Integer id);
+    Activity selectByPrimaryKey(Integer actiId);
+
+    Activity  selectAct_Com_InfoById(Integer actiId);
+
+    List<Activity>  selectActivityRecommend();
+
+    List<Activity> selectActivityJoined(String memid);
+
+    List<Activity> selectLikeActivityRecommend (String condition);
+
     int updateByExampleSelective(@Param("record") Activity record, @Param("example") ActivityExample example);
 
     int updateByExample(@Param("record") Activity record, @Param("example") ActivityExample example);

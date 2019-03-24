@@ -25,7 +25,9 @@ public interface DdActMemMapper {
 
     DdActMem selectByPrimaryKey(Integer id);
   List<DdActMem>  selectActByUserId(String memid);
+    List<DdActMem>  selectUnderwayActByUserId(String memid);
     List<DdActMem>   LikeSelectActByUserId(String mem_id,String condition);
+    List<DdActMem> selectLikeUnderwayAct(String mem_id,String condition);
     int updateByExampleSelective(@Param("record") DdActMem record, @Param("example") DdActMemExample example);
 
     int updateByExample(@Param("record") DdActMem record, @Param("example") DdActMemExample example);

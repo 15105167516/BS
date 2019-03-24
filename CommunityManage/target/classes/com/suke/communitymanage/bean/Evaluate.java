@@ -9,9 +9,32 @@ public class Evaluate {
 
     private String evaTime;
 
-    private Integer evaLeven;
+    private String evaScore;
 
     private Integer actId;
+    private Member member;
+    @Override
+    public String toString() {
+        return "Evaluate{" +
+                "id=" + id +
+                ", memId='" + memId + '\'' +
+                ", memEva='" + memEva + '\'' +
+                ", evaTime='" + evaTime + '\'' +
+                ", evaScore='" + evaScore + '\'' +
+                ", actId=" + actId +
+                ", member=" + member +
+                '}';
+    }
+
+
+
+    public Member getMember() {
+        return member;
+    }
+
+    public void setMember(Member member) {
+        this.member = member;
+    }
 
     public Integer getId() {
         return id;
@@ -45,12 +68,12 @@ public class Evaluate {
         this.evaTime = evaTime == null ? null : evaTime.trim();
     }
 
-    public Integer getEvaLeven() {
-        return evaLeven;
+    public String getEvaScore() {
+        return evaScore;
     }
 
-    public void setEvaLeven(Integer evaLeven) {
-        this.evaLeven = evaLeven;
+    public void setEvaScore(String evaScore) {
+        this.evaScore = evaScore == null ? null : evaScore.trim();
     }
 
     public Integer getActId() {

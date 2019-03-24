@@ -3,7 +3,7 @@ package com.suke.communitymanage.bean;
 import java.util.Date;
 
 public class Activity {
-    private Integer id;
+    private Integer actiId;
 
     private String activityTheme;
 
@@ -21,12 +21,16 @@ public class Activity {
 
     private Integer activiyCommityId;
 
+    private String activityLabel;
+
+    private String applyMoney;
+
     private Community community;
 
     @Override
     public String toString() {
         return "Activity{" +
-                "id=" + id +
+                "actiId=" + actiId +
                 ", activityTheme='" + activityTheme + '\'' +
                 ", activityIntroduction='" + activityIntroduction + '\'' +
                 ", actPeopleCount=" + actPeopleCount +
@@ -35,6 +39,8 @@ public class Activity {
                 ", activityStartTime=" + activityStartTime +
                 ", activityImg='" + activityImg + '\'' +
                 ", activiyCommityId=" + activiyCommityId +
+                ", activityLabel='" + activityLabel + '\'' +
+                ", applyMoney='" + applyMoney + '\'' +
                 ", community=" + community +
                 '}';
     }
@@ -47,12 +53,12 @@ public class Activity {
         this.community = community;
     }
 
-    public Integer getId() {
-        return id;
+    public Integer getActiId() {
+        return actiId;
     }
 
-    public void setId(Integer id) {
-        this.id = id;
+    public void setActiId(Integer actiId) {
+        this.actiId = actiId;
     }
 
     public String getActivityTheme() {
@@ -117,5 +123,21 @@ public class Activity {
 
     public void setActiviyCommityId(Integer activiyCommityId) {
         this.activiyCommityId = activiyCommityId;
+    }
+
+    public String getActivityLabel() {
+        return activityLabel;
+    }
+
+    public void setActivityLabel(String activityLabel) {
+        this.activityLabel = activityLabel == null ? null : activityLabel.trim();
+    }
+
+    public String getApplyMoney() {
+        return applyMoney;
+    }
+
+    public void setApplyMoney(String applyMoney) {
+        this.applyMoney = applyMoney == null ? null : applyMoney.trim();
     }
 }

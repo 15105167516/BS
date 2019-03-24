@@ -961,9 +961,9 @@
       <DataType>varchar(255)|0s</DataType>
       <ColumnKind>normal</ColumnKind>
     </column>
-    <column id="248" parent="235" name="eva_leven">
+    <column id="248" parent="235" name="eva_score">
       <Position>5</Position>
-      <DataType>int(100)|0s</DataType>
+      <DataType>varchar(100)|0s</DataType>
       <ColumnKind>normal</ColumnKind>
     </column>
     <column id="249" parent="235" name="act_id">
@@ -994,9 +994,9 @@
       <ColNames>act_id</ColNames>
       <RefSchemaName>community_manage</RefSchemaName>
       <RefTableName>com_activity</RefTableName>
-      <RefColNames>id</RefColNames>
+      <RefColNames>acti_id</RefColNames>
     </foreign-key>
-    <column id="255" parent="236" name="id">
+    <column id="255" parent="236" name="acti_id">
       <Position>1</Position>
       <DataType>int(100)|0s</DataType>
       <NotNull>1</NotNull>
@@ -1044,324 +1044,334 @@
       <NotNull>1</NotNull>
       <ColumnKind>normal</ColumnKind>
     </column>
-    <index id="264" parent="236" name="sy_com_act">
+    <column id="264" parent="236" name="activity_label">
+      <Position>10</Position>
+      <DataType>varchar(255)|0s</DataType>
+      <ColumnKind>normal</ColumnKind>
+    </column>
+    <column id="265" parent="236" name="apply_money">
+      <Position>11</Position>
+      <DataType>varchar(255)|0s</DataType>
+      <ColumnKind>normal</ColumnKind>
+    </column>
+    <index id="266" parent="236" name="sy_com_act">
       <ColNames>activiy_commity_id</ColNames>
       <Type>btree</Type>
     </index>
-    <key id="265" parent="236" name="PRIMARY">
+    <key id="267" parent="236" name="PRIMARY">
       <NameSurrogate>1</NameSurrogate>
-      <ColNames>id</ColNames>
+      <ColNames>acti_id</ColNames>
       <Primary>1</Primary>
     </key>
-    <foreign-key id="266" parent="236" name="com_activity_ibfk_1">
+    <foreign-key id="268" parent="236" name="com_activity_ibfk_1">
       <ColNames>activiy_commity_id</ColNames>
       <RefSchemaName>community_manage</RefSchemaName>
       <RefTableName>community_info</RefTableName>
       <RefColNames>com_id</RefColNames>
     </foreign-key>
-    <column id="267" parent="237" name="member_id">
+    <column id="269" parent="237" name="member_id">
       <Position>1</Position>
       <DataType>varchar(255)|0s</DataType>
       <NotNull>1</NotNull>
       <ColumnKind>normal</ColumnKind>
     </column>
-    <column id="268" parent="237" name="name">
+    <column id="270" parent="237" name="name">
       <Position>2</Position>
       <DataType>varchar(100)|0s</DataType>
       <NotNull>1</NotNull>
       <ColumnKind>normal</ColumnKind>
     </column>
-    <column id="269" parent="237" name="password">
+    <column id="271" parent="237" name="password">
       <Position>3</Position>
       <DataType>varchar(100)|0s</DataType>
       <NotNull>1</NotNull>
       <ColumnKind>normal</ColumnKind>
     </column>
-    <column id="270" parent="237" name="phone">
+    <column id="272" parent="237" name="phone">
       <Position>4</Position>
       <DataType>varchar(100)|0s</DataType>
       <ColumnKind>normal</ColumnKind>
     </column>
-    <column id="271" parent="237" name="sex">
+    <column id="273" parent="237" name="sex">
       <Position>5</Position>
       <DataType>varchar(100)|0s</DataType>
       <ColumnKind>normal</ColumnKind>
     </column>
-    <column id="272" parent="237" name="birthday">
+    <column id="274" parent="237" name="birthday">
       <Position>6</Position>
       <DataType>varchar(100)|0s</DataType>
       <ColumnKind>normal</ColumnKind>
     </column>
-    <column id="273" parent="237" name="duty">
+    <column id="275" parent="237" name="duty">
       <Position>7</Position>
       <DataType>varchar(100)|0s</DataType>
       <ColumnKind>normal</ColumnKind>
     </column>
-    <key id="274" parent="237" name="PRIMARY">
+    <key id="276" parent="237" name="PRIMARY">
       <NameSurrogate>1</NameSurrogate>
       <ColNames>member_id</ColNames>
       <Primary>1</Primary>
     </key>
-    <column id="275" parent="238" name="com_id">
+    <column id="277" parent="238" name="com_id">
       <Position>1</Position>
       <DataType>int(100)|0s</DataType>
       <NotNull>1</NotNull>
       <SequenceIdentity>1</SequenceIdentity>
       <ColumnKind>normal</ColumnKind>
     </column>
-    <column id="276" parent="238" name="com_name">
+    <column id="278" parent="238" name="com_name">
       <Position>2</Position>
       <DataType>varchar(100)|0s</DataType>
       <NotNull>1</NotNull>
       <ColumnKind>normal</ColumnKind>
     </column>
-    <column id="277" parent="238" name="com_create_date">
+    <column id="279" parent="238" name="com_create_date">
       <Position>3</Position>
       <DataType>varchar(100)|0s</DataType>
       <ColumnKind>normal</ColumnKind>
     </column>
-    <column id="278" parent="238" name="com_img">
+    <column id="280" parent="238" name="com_img">
       <Position>4</Position>
       <DataType>varchar(255)|0s</DataType>
       <ColumnKind>normal</ColumnKind>
     </column>
-    <column id="279" parent="238" name="com_member_number">
+    <column id="281" parent="238" name="com_member_number">
       <Position>5</Position>
       <DataType>int(100)|0s</DataType>
       <ColumnKind>normal</ColumnKind>
     </column>
-    <column id="280" parent="238" name="com_introduction">
+    <column id="282" parent="238" name="com_introduction">
       <Position>6</Position>
       <DataType>varchar(255)|0s</DataType>
       <ColumnKind>normal</ColumnKind>
     </column>
-    <column id="281" parent="238" name="com_admin_id">
+    <column id="283" parent="238" name="com_admin_id">
       <Position>7</Position>
       <DataType>varchar(255)|0s</DataType>
       <ColumnKind>normal</ColumnKind>
     </column>
-    <index id="282" parent="238" name="com_and_adnin">
+    <index id="284" parent="238" name="com_and_adnin">
       <ColNames>com_admin_id</ColNames>
       <Type>btree</Type>
     </index>
-    <key id="283" parent="238" name="PRIMARY">
+    <key id="285" parent="238" name="PRIMARY">
       <NameSurrogate>1</NameSurrogate>
       <ColNames>com_id</ColNames>
       <Primary>1</Primary>
     </key>
-    <foreign-key id="284" parent="238" name="com_and_adnin">
+    <foreign-key id="286" parent="238" name="com_and_adnin">
       <ColNames>com_admin_id</ColNames>
       <RefSchemaName>community_manage</RefSchemaName>
       <RefTableName>community_admin</RefTableName>
       <RefColNames>member_id</RefColNames>
     </foreign-key>
-    <column id="285" parent="239" name="id">
+    <column id="287" parent="239" name="id">
       <Position>1</Position>
       <DataType>int(100)|0s</DataType>
       <NotNull>1</NotNull>
       <SequenceIdentity>1</SequenceIdentity>
       <ColumnKind>normal</ColumnKind>
     </column>
-    <column id="286" parent="239" name="member_id">
+    <column id="288" parent="239" name="member_id">
       <Position>2</Position>
       <DataType>varchar(255)|0s</DataType>
       <NotNull>1</NotNull>
       <ColumnKind>normal</ColumnKind>
     </column>
-    <column id="287" parent="239" name="com_id">
+    <column id="289" parent="239" name="com_id">
       <Position>3</Position>
       <DataType>int(100)|0s</DataType>
       <NotNull>1</NotNull>
       <ColumnKind>normal</ColumnKind>
     </column>
-    <index id="288" parent="239" name="sy_mem_id">
+    <index id="290" parent="239" name="sy_mem_id">
       <ColNames>member_id</ColNames>
       <Type>btree</Type>
     </index>
-    <index id="289" parent="239" name="sy_com_id">
+    <index id="291" parent="239" name="sy_com_id">
       <ColNames>com_id</ColNames>
       <Type>btree</Type>
     </index>
-    <key id="290" parent="239" name="PRIMARY">
+    <key id="292" parent="239" name="PRIMARY">
       <NameSurrogate>1</NameSurrogate>
       <ColNames>id</ColNames>
       <Primary>1</Primary>
     </key>
-    <foreign-key id="291" parent="239" name="dd_com_member_ibfk_2">
+    <foreign-key id="293" parent="239" name="dd_com_member_ibfk_2">
       <ColNames>member_id</ColNames>
       <RefSchemaName>community_manage</RefSchemaName>
       <RefTableName>member_info</RefTableName>
       <RefColNames>member_id</RefColNames>
     </foreign-key>
-    <foreign-key id="292" parent="239" name="dd_com_member_ibfk_1">
+    <foreign-key id="294" parent="239" name="dd_com_member_ibfk_1">
       <ColNames>com_id</ColNames>
       <RefSchemaName>community_manage</RefSchemaName>
       <RefTableName>community_info</RefTableName>
       <RefColNames>com_id</RefColNames>
     </foreign-key>
-    <column id="293" parent="240" name="id">
+    <column id="295" parent="240" name="id">
       <Position>1</Position>
       <DataType>int(100)|0s</DataType>
       <NotNull>1</NotNull>
       <SequenceIdentity>1</SequenceIdentity>
       <ColumnKind>normal</ColumnKind>
     </column>
-    <column id="294" parent="240" name="mem_id">
+    <column id="296" parent="240" name="mem_id">
       <Position>2</Position>
       <DataType>varchar(255)|0s</DataType>
       <ColumnKind>normal</ColumnKind>
     </column>
-    <column id="295" parent="240" name="activity_id">
+    <column id="297" parent="240" name="activity_id">
       <Position>3</Position>
       <DataType>int(100)|0s</DataType>
       <ColumnKind>normal</ColumnKind>
     </column>
-    <index id="296" parent="240" name="sy_mem_id">
+    <index id="298" parent="240" name="sy_mem_id">
       <ColNames>mem_id</ColNames>
       <Type>btree</Type>
     </index>
-    <index id="297" parent="240" name="sy_act_id">
+    <index id="299" parent="240" name="sy_act_id">
       <ColNames>activity_id</ColNames>
       <Type>btree</Type>
     </index>
-    <key id="298" parent="240" name="PRIMARY">
+    <key id="300" parent="240" name="PRIMARY">
       <NameSurrogate>1</NameSurrogate>
       <ColNames>id</ColNames>
       <Primary>1</Primary>
     </key>
-    <foreign-key id="299" parent="240" name="member_activity_ibfk_2">
+    <foreign-key id="301" parent="240" name="member_activity_ibfk_2">
       <ColNames>mem_id</ColNames>
       <RefSchemaName>community_manage</RefSchemaName>
       <RefTableName>member_info</RefTableName>
       <RefColNames>member_id</RefColNames>
     </foreign-key>
-    <foreign-key id="300" parent="240" name="member_activity_ibfk_1">
+    <foreign-key id="302" parent="240" name="member_activity_ibfk_1">
       <ColNames>activity_id</ColNames>
       <RefSchemaName>community_manage</RefSchemaName>
       <RefTableName>com_activity</RefTableName>
-      <RefColNames>id</RefColNames>
+      <RefColNames>acti_id</RefColNames>
     </foreign-key>
-    <column id="301" parent="241" name="member_id">
+    <column id="303" parent="241" name="member_id">
       <Position>1</Position>
       <DataType>varchar(255)|0s</DataType>
       <NotNull>1</NotNull>
       <ColumnKind>normal</ColumnKind>
     </column>
-    <column id="302" parent="241" name="member_name">
+    <column id="304" parent="241" name="member_name">
       <Position>2</Position>
       <DataType>varchar(100)|0s</DataType>
       <NotNull>1</NotNull>
       <ColumnKind>normal</ColumnKind>
     </column>
-    <column id="303" parent="241" name="member_password">
+    <column id="305" parent="241" name="member_password">
       <Position>3</Position>
       <DataType>varchar(100)|0s</DataType>
       <NotNull>1</NotNull>
       <ColumnKind>normal</ColumnKind>
     </column>
-    <column id="304" parent="241" name="sex">
+    <column id="306" parent="241" name="sex">
       <Position>4</Position>
       <DataType>varchar(100)|0s</DataType>
       <ColumnKind>normal</ColumnKind>
     </column>
-    <column id="305" parent="241" name="interest">
+    <column id="307" parent="241" name="interest">
       <Position>5</Position>
       <DataType>varchar(255)|0s</DataType>
       <ColumnKind>normal</ColumnKind>
     </column>
-    <column id="306" parent="241" name="phone">
+    <column id="308" parent="241" name="phone">
       <Position>6</Position>
       <DataType>varchar(100)|0s</DataType>
       <NotNull>1</NotNull>
       <ColumnKind>normal</ColumnKind>
     </column>
-    <column id="307" parent="241" name="class_num">
+    <column id="309" parent="241" name="class_num">
       <Position>7</Position>
       <DataType>varchar(100)|0s</DataType>
       <ColumnKind>normal</ColumnKind>
     </column>
-    <column id="308" parent="241" name="head_img">
+    <column id="310" parent="241" name="head_img">
       <Position>8</Position>
       <DataType>varchar(255)|0s</DataType>
       <ColumnKind>normal</ColumnKind>
     </column>
-    <column id="309" parent="241" name="join_date">
+    <column id="311" parent="241" name="join_date">
       <Position>9</Position>
       <DataType>varchar(100)|0s</DataType>
       <ColumnKind>normal</ColumnKind>
     </column>
-    <key id="310" parent="241" name="PRIMARY">
+    <key id="312" parent="241" name="PRIMARY">
       <NameSurrogate>1</NameSurrogate>
       <ColNames>member_id</ColNames>
       <Primary>1</Primary>
     </key>
-    <column id="311" parent="242" name="su_id">
+    <column id="313" parent="242" name="su_id">
       <Position>1</Position>
       <DataType>int(100)|0s</DataType>
       <NotNull>1</NotNull>
       <SequenceIdentity>1</SequenceIdentity>
       <ColumnKind>normal</ColumnKind>
     </column>
-    <column id="312" parent="242" name="su_name">
+    <column id="314" parent="242" name="su_name">
       <Position>2</Position>
       <DataType>varchar(100)|0s</DataType>
       <NotNull>1</NotNull>
       <ColumnKind>normal</ColumnKind>
     </column>
-    <column id="313" parent="242" name="su_password">
+    <column id="315" parent="242" name="su_password">
       <Position>3</Position>
       <DataType>varchar(255)|0s</DataType>
       <NotNull>1</NotNull>
       <ColumnKind>normal</ColumnKind>
     </column>
-    <key id="314" parent="242" name="PRIMARY">
+    <key id="316" parent="242" name="PRIMARY">
       <NameSurrogate>1</NameSurrogate>
       <ColNames>su_id</ColNames>
       <Primary>1</Primary>
     </key>
-    <column id="315" parent="243" name="tem_user_id">
+    <column id="317" parent="243" name="tem_user_id">
       <Position>1</Position>
       <DataType>varchar(255)|0s</DataType>
       <NotNull>1</NotNull>
       <ColumnKind>normal</ColumnKind>
     </column>
-    <column id="316" parent="243" name="tem_com_id">
+    <column id="318" parent="243" name="tem_com_id">
       <Position>2</Position>
       <DataType>int(100)|0s</DataType>
       <NotNull>1</NotNull>
       <ColumnKind>normal</ColumnKind>
     </column>
-    <column id="317" parent="243" name="apply_time">
+    <column id="319" parent="243" name="apply_time">
       <Position>3</Position>
       <DataType>varchar(255)|0s</DataType>
       <ColumnKind>normal</ColumnKind>
     </column>
-    <column id="318" parent="243" name="status">
+    <column id="320" parent="243" name="status">
       <Position>4</Position>
       <DataType>int(255)|0s</DataType>
       <ColumnKind>normal</ColumnKind>
     </column>
-    <index id="319" parent="243" name="sy_mem_id">
+    <index id="321" parent="243" name="sy_mem_id">
       <ColNames>tem_user_id</ColNames>
       <Type>btree</Type>
     </index>
-    <index id="320" parent="243" name="sy_com_id">
+    <index id="322" parent="243" name="sy_com_id">
       <ColNames>tem_com_id</ColNames>
       <Type>btree</Type>
     </index>
-    <key id="321" parent="243" name="PRIMARY">
+    <key id="323" parent="243" name="PRIMARY">
       <NameSurrogate>1</NameSurrogate>
       <ColNames>tem_user_id
 tem_com_id</ColNames>
       <Primary>1</Primary>
     </key>
-    <foreign-key id="322" parent="243" name="temporary_apply_community_ibfk_2">
+    <foreign-key id="324" parent="243" name="temporary_apply_community_ibfk_2">
       <ColNames>tem_user_id</ColNames>
       <RefSchemaName>community_manage</RefSchemaName>
       <RefTableName>member_info</RefTableName>
       <RefColNames>member_id</RefColNames>
     </foreign-key>
-    <foreign-key id="323" parent="243" name="temporary_apply_community_ibfk_1">
+    <foreign-key id="325" parent="243" name="temporary_apply_community_ibfk_1">
       <ColNames>tem_com_id</ColNames>
       <RefSchemaName>community_manage</RefSchemaName>
       <RefTableName>community_info</RefTableName>

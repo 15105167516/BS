@@ -374,63 +374,73 @@ public class EvaluateExample {
             return (Criteria) this;
         }
 
-        public Criteria andEvaLevenIsNull() {
-            addCriterion("eva_leven is null");
+        public Criteria andEvaScoreIsNull() {
+            addCriterion("eva_score is null");
             return (Criteria) this;
         }
 
-        public Criteria andEvaLevenIsNotNull() {
-            addCriterion("eva_leven is not null");
+        public Criteria andEvaScoreIsNotNull() {
+            addCriterion("eva_score is not null");
             return (Criteria) this;
         }
 
-        public Criteria andEvaLevenEqualTo(Integer value) {
-            addCriterion("eva_leven =", value, "evaLeven");
+        public Criteria andEvaScoreEqualTo(String value) {
+            addCriterion("eva_score =", value, "evaScore");
             return (Criteria) this;
         }
 
-        public Criteria andEvaLevenNotEqualTo(Integer value) {
-            addCriterion("eva_leven <>", value, "evaLeven");
+        public Criteria andEvaScoreNotEqualTo(String value) {
+            addCriterion("eva_score <>", value, "evaScore");
             return (Criteria) this;
         }
 
-        public Criteria andEvaLevenGreaterThan(Integer value) {
-            addCriterion("eva_leven >", value, "evaLeven");
+        public Criteria andEvaScoreGreaterThan(String value) {
+            addCriterion("eva_score >", value, "evaScore");
             return (Criteria) this;
         }
 
-        public Criteria andEvaLevenGreaterThanOrEqualTo(Integer value) {
-            addCriterion("eva_leven >=", value, "evaLeven");
+        public Criteria andEvaScoreGreaterThanOrEqualTo(String value) {
+            addCriterion("eva_score >=", value, "evaScore");
             return (Criteria) this;
         }
 
-        public Criteria andEvaLevenLessThan(Integer value) {
-            addCriterion("eva_leven <", value, "evaLeven");
+        public Criteria andEvaScoreLessThan(String value) {
+            addCriterion("eva_score <", value, "evaScore");
             return (Criteria) this;
         }
 
-        public Criteria andEvaLevenLessThanOrEqualTo(Integer value) {
-            addCriterion("eva_leven <=", value, "evaLeven");
+        public Criteria andEvaScoreLessThanOrEqualTo(String value) {
+            addCriterion("eva_score <=", value, "evaScore");
             return (Criteria) this;
         }
 
-        public Criteria andEvaLevenIn(List<Integer> values) {
-            addCriterion("eva_leven in", values, "evaLeven");
+        public Criteria andEvaScoreLike(String value) {
+            addCriterion("eva_score like", value, "evaScore");
             return (Criteria) this;
         }
 
-        public Criteria andEvaLevenNotIn(List<Integer> values) {
-            addCriterion("eva_leven not in", values, "evaLeven");
+        public Criteria andEvaScoreNotLike(String value) {
+            addCriterion("eva_score not like", value, "evaScore");
             return (Criteria) this;
         }
 
-        public Criteria andEvaLevenBetween(Integer value1, Integer value2) {
-            addCriterion("eva_leven between", value1, value2, "evaLeven");
+        public Criteria andEvaScoreIn(List<String> values) {
+            addCriterion("eva_score in", values, "evaScore");
             return (Criteria) this;
         }
 
-        public Criteria andEvaLevenNotBetween(Integer value1, Integer value2) {
-            addCriterion("eva_leven not between", value1, value2, "evaLeven");
+        public Criteria andEvaScoreNotIn(List<String> values) {
+            addCriterion("eva_score not in", values, "evaScore");
+            return (Criteria) this;
+        }
+
+        public Criteria andEvaScoreBetween(String value1, String value2) {
+            addCriterion("eva_score between", value1, value2, "evaScore");
+            return (Criteria) this;
+        }
+
+        public Criteria andEvaScoreNotBetween(String value1, String value2) {
+            addCriterion("eva_score not between", value1, value2, "evaScore");
             return (Criteria) this;
         }
 

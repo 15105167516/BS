@@ -2,7 +2,7 @@
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 <mapper namespace="com.suke.communitymanage.dao.ActivityMapper">
   <resultMap id="BaseResultMap" type="com.suke.communitymanage.bean.Activity">
-    <id column="id" jdbcType="INTEGER" property="id" />
+    <id column="acti_id" jdbcType="INTEGER" property="actiId" />
     <result column="activity_theme" jdbcType="VARCHAR" property="activityTheme" />
     <result column="activity_introduction" jdbcType="VARCHAR" property="activityIntroduction" />
     <result column="act_people_count" jdbcType="INTEGER" property="actPeopleCount" />
@@ -11,12 +11,15 @@
     <result column="activity_start_time" jdbcType="TIMESTAMP" property="activityStartTime" />
     <result column="activity_img" jdbcType="VARCHAR" property="activityImg" />
     <result column="activiy_commity_id" jdbcType="INTEGER" property="activiyCommityId" />
+    <result column="activity_label" jdbcType="VARCHAR" property="activityLabel" />
+    <result column="apply_money" jdbcType="VARCHAR" property="applyMoney" />
   </resultMap>
   <resultMap id="SelfResultMap1" extends="BaseResultMap" type="com.suke.communitymanage.bean.Activity">
     <association property="community" javaType="com.suke.communitymanage.bean.Community" resultMap="com.suke.communitymanage.dao.CommunityMapper.SelfResultMap">
 
     </association>
   </resultMap>
+
   <sql id="Example_Where_Clause">
     <where>
       <foreach collection="oredCriteria" item="criteria" separator="or">
@@ -76,19 +79,44 @@
     </where>
   </sql>
   <sql id="Base_Column_List">
-    id, activity_theme, activity_introduction, act_people_count, activity_address, activity_end_time, 
-    activity_start_time, activity_img, activiy_commity_id
+    acti_id, activity_theme, activity_introduction, act_people_count, activity_address, 
+    activity_end_time, activity_start_time, activity_img, activiy_commity_id, activity_label, 
+    apply_money
   </sql>
   <sql id="self_act-com_info">
- ca.*,ci.*,cad.*
+    ca.*,ci.*,cad.*
   </sql>
+  <!--模糊查询出所有的活动，且还未开始的活动-->
+  <select id="selectLikeActivityRecommend" parameterType="java.lang.String" resultMap="SelfResultMap1">
+    select
+    <include refid="self_act-com_info" />
+    from (com_activity ca inner join community_info ci on ca.activiy_commity_id = ci.com_id) inner join
+    community_admin cad on ci.com_admin_id=cad.member_id where ca.activity_start_time > now() and
+    CONCAT(ca.activity_theme,ci.com_name) LIKE CONCAT('%',#{condition},'%')
+  </select>
+    <!--查询出所有的活动，且已经参与了未开始的活动-->
+    <select id="selectActivityJoined" parameterType="java.lang.String" resultMap="SelfResultMap1">
+        select
+        <include refid="self_act-com_info" />
+        from ((com_activity ca inner join community_info ci on ca.activiy_commity_id = ci.com_id) inner join
+        community_admin cad on ci.com_admin_id=cad.member_id) inner  join member_activity ma
+        on ca.acti_id=ma.activity_id where ma.mem_id=#{memid} and ca.activity_start_time > now()
+    </select>
+  <!--查询出所有的活动，且还未开始的活动，且与用户的兴趣爱好有两个以及以上的匹配活动（活动推荐）-->
+  <select id="selectActivityRecommend" parameterType="java.lang.Integer" resultMap="SelfResultMap1">
+    select
+    <include refid="self_act-com_info" />
+    from (com_activity ca inner join community_info ci on ca.activiy_commity_id = ci.com_id) inner join
+    community_admin cad on ci.com_admin_id=cad.member_id where ca.activity_start_time > now()
+  </select>
   <!--通过活动id查询 活动详情以及对应社团以及管理员信息-->
   <select id="selectAct_Com_InfoById" parameterType="java.lang.Integer" resultMap="SelfResultMap1">
     select
     <include refid="self_act-com_info" />
     from (com_activity ca inner join community_info ci on ca.activiy_commity_id = ci.com_id) inner join
-    community_admin cad on ci.com_admin_id=cad.member_id where id = #{id,jdbcType=INTEGER}
+    community_admin cad on ci.com_admin_id=cad.member_id where ca.acti_id = #{id,jdbcType=INTEGER}
   </select>
+
   <select id="selectByExample" parameterType="com.suke.communitymanage.bean.ActivityExample" resultMap="BaseResultMap">
     select
     <if test="distinct">
@@ -107,11 +135,11 @@
     select 
     <include refid="Base_Column_List" />
     from com_activity
-    where id = #{id,jdbcType=INTEGER}
+    where acti_id = #{actiId,jdbcType=INTEGER}
   </select>
   <delete id="deleteByPrimaryKey" parameterType="java.lang.Integer">
     delete from com_activity
-    where id = #{id,jdbcType=INTEGER}
+    where acti_id = #{actiId,jdbcType=INTEGER}
   </delete>
   <delete id="deleteByExample" parameterType="com.suke.communitymanage.bean.ActivityExample">
     delete from com_activity
@@ -120,20 +148,20 @@
     </if>
   </delete>
   <insert id="insert" parameterType="com.suke.communitymanage.bean.Activity">
-    insert into com_activity (id, activity_theme, activity_introduction, 
+    insert into com_activity (acti_id, activity_theme, activity_introduction, 
       act_people_count, activity_address, activity_end_time, 
-      activity_start_time, activity_img, activiy_commity_id
-      )
-    values (#{id,jdbcType=INTEGER}, #{activityTheme,jdbcType=VARCHAR}, #{activityIntroduction,jdbcType=VARCHAR}, 
+      activity_start_time, activity_img, activiy_commity_id, 
+      activity_label, apply_money)
+    values (#{actiId,jdbcType=INTEGER}, #{activityTheme,jdbcType=VARCHAR}, #{activityIntroduction,jdbcType=VARCHAR}, 
       #{actPeopleCount,jdbcType=INTEGER}, #{activityAddress,jdbcType=VARCHAR}, #{activityEndTime,jdbcType=TIMESTAMP}, 
-      #{activityStartTime,jdbcType=TIMESTAMP}, #{activityImg,jdbcType=VARCHAR}, #{activiyCommityId,jdbcType=INTEGER}
-      )
+      #{activityStartTime,jdbcType=TIMESTAMP}, #{activityImg,jdbcType=VARCHAR}, #{activiyCommityId,jdbcType=INTEGER}, 
+      #{activityLabel,jdbcType=VARCHAR}, #{applyMoney,jdbcType=VARCHAR})
   </insert>
   <insert id="insertSelective" parameterType="com.suke.communitymanage.bean.Activity">
     insert into com_activity
     <trim prefix="(" suffix=")" suffixOverrides=",">
-      <if test="id != null">
-        id,
+      <if test="actiId != null">
+        acti_id,
       </if>
       <if test="activityTheme != null">
         activity_theme,
@@ -159,10 +187,16 @@
       <if test="activiyCommityId != null">
         activiy_commity_id,
       </if>
+      <if test="activityLabel != null">
+        activity_label,
+      </if>
+      <if test="applyMoney != null">
+        apply_money,
+      </if>
     </trim>
     <trim prefix="values (" suffix=")" suffixOverrides=",">
-      <if test="id != null">
-        #{id,jdbcType=INTEGER},
+      <if test="actiId != null">
+        #{actiId,jdbcType=INTEGER},
       </if>
       <if test="activityTheme != null">
         #{activityTheme,jdbcType=VARCHAR},
@@ -188,6 +222,12 @@
       <if test="activiyCommityId != null">
         #{activiyCommityId,jdbcType=INTEGER},
       </if>
+      <if test="activityLabel != null">
+        #{activityLabel,jdbcType=VARCHAR},
+      </if>
+      <if test="applyMoney != null">
+        #{applyMoney,jdbcType=VARCHAR},
+      </if>
     </trim>
   </insert>
   <select id="countByExample" parameterType="com.suke.communitymanage.bean.ActivityExample" resultType="java.lang.Long">
@@ -199,8 +239,8 @@
   <update id="updateByExampleSelective" parameterType="map">
     update com_activity
     <set>
-      <if test="record.id != null">
-        id = #{record.id,jdbcType=INTEGER},
+      <if test="record.actiId != null">
+        acti_id = #{record.actiId,jdbcType=INTEGER},
       </if>
       <if test="record.activityTheme != null">
         activity_theme = #{record.activityTheme,jdbcType=VARCHAR},
@@ -226,6 +266,12 @@
       <if test="record.activiyCommityId != null">
         activiy_commity_id = #{record.activiyCommityId,jdbcType=INTEGER},
       </if>
+      <if test="record.activityLabel != null">
+        activity_label = #{record.activityLabel,jdbcType=VARCHAR},
+      </if>
+      <if test="record.applyMoney != null">
+        apply_money = #{record.applyMoney,jdbcType=VARCHAR},
+      </if>
     </set>
     <if test="_parameter != null">
       <include refid="Update_By_Example_Where_Clause" />
@@ -233,7 +279,7 @@
   </update>
   <update id="updateByExample" parameterType="map">
     update com_activity
-    set id = #{record.id,jdbcType=INTEGER},
+    set acti_id = #{record.actiId,jdbcType=INTEGER},
       activity_theme = #{record.activityTheme,jdbcType=VARCHAR},
       activity_introduction = #{record.activityIntroduction,jdbcType=VARCHAR},
       act_people_count = #{record.actPeopleCount,jdbcType=INTEGER},
@@ -241,7 +287,9 @@
       activity_end_time = #{record.activityEndTime,jdbcType=TIMESTAMP},
       activity_start_time = #{record.activityStartTime,jdbcType=TIMESTAMP},
       activity_img = #{record.activityImg,jdbcType=VARCHAR},
-      activiy_commity_id = #{record.activiyCommityId,jdbcType=INTEGER}
+      activiy_commity_id = #{record.activiyCommityId,jdbcType=INTEGER},
+      activity_label = #{record.activityLabel,jdbcType=VARCHAR},
+      apply_money = #{record.applyMoney,jdbcType=VARCHAR}
     <if test="_parameter != null">
       <include refid="Update_By_Example_Where_Clause" />
     </if>
@@ -273,8 +321,14 @@
       <if test="activiyCommityId != null">
         activiy_commity_id = #{activiyCommityId,jdbcType=INTEGER},
       </if>
+      <if test="activityLabel != null">
+        activity_label = #{activityLabel,jdbcType=VARCHAR},
+      </if>
+      <if test="applyMoney != null">
+        apply_money = #{applyMoney,jdbcType=VARCHAR},
+      </if>
     </set>
-    where id = #{id,jdbcType=INTEGER}
+    where acti_id = #{actiId,jdbcType=INTEGER}
   </update>
   <update id="updateByPrimaryKey" parameterType="com.suke.communitymanage.bean.Activity">
     update com_activity
@@ -285,7 +339,9 @@
       activity_end_time = #{activityEndTime,jdbcType=TIMESTAMP},
       activity_start_time = #{activityStartTime,jdbcType=TIMESTAMP},
       activity_img = #{activityImg,jdbcType=VARCHAR},
-      activiy_commity_id = #{activiyCommityId,jdbcType=INTEGER}
-    where id = #{id,jdbcType=INTEGER}
+      activiy_commity_id = #{activiyCommityId,jdbcType=INTEGER},
+      activity_label = #{activityLabel,jdbcType=VARCHAR},
+      apply_money = #{applyMoney,jdbcType=VARCHAR}
+    where acti_id = #{actiId,jdbcType=INTEGER}
   </update>
 </mapper>

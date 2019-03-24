@@ -18,19 +18,28 @@ import java.util.List;
 public class CommunityController {
     @Autowired
     CommunityService communityService;
+
+
+
+
+
     /**
      * 返回对应用户参加的社团
      */
     @RequestMapping(value = "/likeSearchJoinedCom/{mem_id}", method = RequestMethod.GET)
-    public String searchLike( @PathVariable("mem_id") String mem_id,@RequestParam(value = "condition")String condition, Model model) {
+    public String searchLike( @RequestParam(value = "pn", defaultValue = "1")Integer pn,@PathVariable("mem_id") String mem_id,@RequestParam(value = "condition")String condition, Model model) {
 
-        PageHelper.startPage(1, 3);
+        PageHelper.startPage(pn, 3);
         List<Community> communities = communityService.likeSearchJoinedCom(mem_id,condition);
         // 使用pageInfo包装查询后的结果，只需要将pageInfo交给页面就行了。
         // 封装了详细的分页信息,包括有我们查询出来的数据，传入连续显示的页数
         PageInfo page = new PageInfo(communities, 3);
         List<Community> list = page.getList();
         model.addAttribute("list", list);
+        //判断是否点击搜索按钮
+        model.addAttribute("LikeCheck", 1);
+        //保存查询的条件
+        model.addAttribute("condition", condition);
         //封装对点击查询的判断
         model.addAttribute("check", "1");
         //封装分页信息
